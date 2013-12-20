@@ -22,6 +22,7 @@
 
 #include "base/i2-base.h"
 #include "base/debug.h"
+#include "base/allocator.h"
 #include <boost/thread/thread.hpp>
 
 #ifndef _DEBUG
@@ -41,6 +42,7 @@ using boost::enable_shared_from_this;
 using boost::dynamic_pointer_cast;
 using boost::static_pointer_cast;
 using boost::make_shared;
+using boost::allocate_shared;
 
 namespace icinga
 {

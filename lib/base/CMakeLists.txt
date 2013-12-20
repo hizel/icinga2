@@ -24,7 +24,7 @@ mkclass_target(streamlogger.ti streamlogger.th)
 mkclass_target(sysloglogger.ti sysloglogger.th)
 
 add_library(base SHARED
-  application.cpp application.th array.cpp bufferedstream.cpp context.cpp
+  allocator.cpp application.cpp application.th array.cpp bufferedstream.cpp context.cpp
   convert.cpp dictionary.cpp dynamicobject.cpp dynamicobject.th dynamictype.cpp
   exception.cpp fifo.cpp filelogger.cpp filelogger.th logger.cpp logger.th
   netstring.cpp networkstream.cpp object.cpp objectlock.cpp process.cpp

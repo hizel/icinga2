@@ -21,6 +21,7 @@
 #define STRING_H
 
 #include "base/i2-base.h"
+#include "base/allocator.h"
 #include <boost/range/iterator.hpp>
 #include <ostream>
 #include <istream>
@@ -29,6 +30,8 @@
 namespace icinga {
 
 class Value;
+
+typedef std::basic_string<char, std::char_traits<char>, naive_allocator<char> > NString;
 
 /**
  * String class.
@@ -39,14 +42,15 @@ class Value;
 class I2_BASE_API String
 {
 public:
-	typedef std::string::iterator Iterator;
-	typedef std::string::const_iterator ConstIterator;
+	typedef NString::iterator Iterator;
+	typedef NString::const_iterator ConstIterator;
 
-	typedef std::string::iterator iterator;
-	typedef std::string::const_iterator const_iterator;
+	typedef NString::iterator iterator;
+	typedef NString::const_iterator const_iterator;
 
 	String(void);
 	String(const char *data);
+	String(const NString& data);
 	String(const std::string& data);
 	String(size_t n, char c);
 
@@ -58,7 +62,7 @@ public:
 	String(const String& other);
 
 	String& operator=(const String& rhs);
-	String& operator=(const std::string& rhs);
+	String& operator=(const NString& rhs);
 	String& operator=(const char *rhs);
 
 	const char& operator[](size_t pos) const;
@@ -73,13 +77,14 @@ public:
 
 	bool operator<(const String& rhs) const;
 
-	operator const std::string&(void) const;
+	operator const NString&(void) const;
+	operator std::string(void) const;
 
 	const char *CStr(void) const;
 	void Clear(void);
 	size_t GetLength(void) const;
 
-	std::string& GetData(void);
+	NString& GetData(void);
 
 	size_t Find(const String& str, size_t pos = 0) const;
 	size_t RFind(const String& str, size_t pos = NPos) const;
@@ -110,7 +115,7 @@ public:
 	static const size_t NPos;
 
 private:
-	std::string m_Data;
+	NString m_Data;
 };
 
 I2_BASE_API std::ostream& operator<<(std::ostream& stream, const String& str);

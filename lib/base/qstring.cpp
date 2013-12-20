@@ -27,7 +27,7 @@
 
 using namespace icinga;
 
-const size_t String::NPos = std::string::npos;
+const size_t String::NPos = NString::npos;
 
 String::String(void)
 	: m_Data()
@@ -37,8 +37,12 @@ String::String(const char *data)
 	: m_Data(data)
 { }
 
-String::String(const std::string& data)
+String::String(const NString& data)
 	: m_Data(data)
+{ }
+
+String::String(const std::string& data)
+	: m_Data(data.begin(), data.end())
 { }
 
 String::String(size_t n, char c)
@@ -55,7 +59,7 @@ String& String::operator=(const String& rhs)
 	return *this;
 }
 
-String& String::operator=(const std::string& rhs)
+String& String::operator=(const NString& rhs)
 {
 	m_Data = rhs;
 	return *this;
@@ -111,9 +115,14 @@ bool String::operator<(const String& rhs) const
 	return m_Data < rhs.m_Data;
 }
 
-String::operator const std::string&(void) const
+String::operator const NString&(void) const
 {
 	return m_Data;
+}
+
+String::operator std::string(void) const
+{
+	return std::string(m_Data.begin(), m_Data.end());
 }
 
 const char *String::CStr(void) const
@@ -131,7 +140,7 @@ size_t String::GetLength(void) const
 	return m_Data.size();
 }
 
-std::string& String::GetData(void)
+NString& String::GetData(void)
 {
 	return m_Data;
 }
@@ -183,7 +192,7 @@ void String::Trim(void)
 
 bool String::Contains(const String& str) const
 {
-	return (m_Data.find(str) != std::string::npos);
+	return (m_Data.find(str) != NString::npos);
 }
 
 void String::swap(String& str)
@@ -218,13 +227,13 @@ String::ConstIterator String::End(void) const
 
 std::ostream& icinga::operator<<(std::ostream& stream, const String& str)
 {
-	stream << static_cast<std::string>(str);
+	stream << static_cast<NString>(str);
 	return stream;
 }
 
 std::istream& icinga::operator>>(std::istream& stream, String& str)
 {
-	std::string tstr;
+	NString tstr;
 	stream >> tstr;
 	str = tstr;
 	return stream;
@@ -232,102 +241,102 @@ std::istream& icinga::operator>>(std::istream& stream, String& str)
 
 String icinga::operator+(const String& lhs, const String& rhs)
 {
-	return static_cast<std::string>(lhs) + static_cast<std::string>(rhs);
+	return static_cast<NString>(lhs) + static_cast<NString>(rhs);
 }
 
 String icinga::operator+(const String& lhs, const char *rhs)
 {
-	return static_cast<std::string>(lhs) + rhs;
+	return static_cast<NString>(lhs) + rhs;
 }
 
 String icinga::operator+(const char *lhs, const String& rhs)
 {
-	return lhs + static_cast<std::string>(rhs);
+	return lhs + static_cast<NString>(rhs);
 }
 
 bool icinga::operator==(const String& lhs, const String& rhs)
 {
-	return static_cast<std::string>(lhs) == static_cast<std::string>(rhs);
+	return static_cast<NString>(lhs) == static_cast<NString>(rhs);
 }
 
 bool icinga::operator==(const String& lhs, const char *rhs)
 {
-	return static_cast<std::string>(lhs) == rhs;
+	return static_cast<NString>(lhs) == rhs;
 }
 
 bool icinga::operator==(const char *lhs, const String& rhs)
 {
-	return lhs == static_cast<std::string>(rhs);
+	return lhs == static_cast<NString>(rhs);
 }
 
 bool icinga::operator<(const String& lhs, const char *rhs)
 {
-	return static_cast<std::string>(lhs) < rhs;
+	return static_cast<NString>(lhs) < rhs;
 }
 
 bool icinga::operator<(const char *lhs, const String& rhs)
 {
-	return lhs < static_cast<std::string>(rhs);
+	return lhs < static_cast<NString>(rhs);
 }
 
 bool icinga::operator>(const String& lhs, const String& rhs)
 {
-	return static_cast<std::string>(lhs) > static_cast<std::string>(rhs);
+	return static_cast<NString>(lhs) > static_cast<NString>(rhs);
 }
 
 bool icinga::operator>(const String& lhs, const char *rhs)
 {
-	return static_cast<std::string>(lhs) > rhs;
+	return static_cast<NString>(lhs) > rhs;
 }
 
 bool icinga::operator>(const char *lhs, const String& rhs)
 {
-	return lhs > static_cast<std::string>(rhs);
+	return lhs > static_cast<NString>(rhs);
 }
 
 bool icinga::operator<=(const String& lhs, const String& rhs)
 {
-	return static_cast<std::string>(lhs) <= static_cast<std::string>(rhs);
+	return static_cast<NString>(lhs) <= static_cast<NString>(rhs);
 }
 
 bool icinga::operator<=(const String& lhs, const char *rhs)
 {
-	return static_cast<std::string>(lhs) <= rhs;
+	return static_cast<NString>(lhs) <= rhs;
 }
 
 bool icinga::operator<=(const char *lhs, const String& rhs)
 {
-	return lhs <= static_cast<std::string>(rhs);
+	return lhs <= static_cast<NString>(rhs);
 }
 
 bool icinga::operator>=(const String& lhs, const String& rhs)
 {
-	return static_cast<std::string>(lhs) >= static_cast<std::string>(rhs);
+	return static_cast<NString>(lhs) >= static_cast<NString>(rhs);
 }
 
 bool icinga::operator>=(const String& lhs, const char *rhs)
 {
-	return static_cast<std::string>(lhs) >= rhs;
+	return static_cast<NString>(lhs) >= rhs;
 }
 
 bool icinga::operator>=(const char *lhs, const String& rhs)
 {
-	return lhs >= static_cast<std::string>(rhs);
+	return lhs >= static_cast<NString>(rhs);
 }
 
 bool icinga::operator!=(const String& lhs, const String& rhs)
 {
-	return static_cast<std::string>(lhs) != static_cast<std::string>(rhs);
+	return static_cast<NString>(lhs) != static_cast<NString>(rhs);
 }
 
 bool icinga::operator!=(const String& lhs, const char *rhs)
 {
-	return static_cast<std::string>(lhs) != rhs;
+	return static_cast<NString>(lhs) != rhs;
 }
 
 bool icinga::operator!=(const char *lhs, const String& rhs)
 {
-	return lhs != static_cast<std::string>(rhs);
+	return lhs != static_cast<NString>(rhs);
 }
 
 String::Iterator icinga::range_begin(String& x)
