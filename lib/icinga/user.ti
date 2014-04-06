@@ -16,10 +16,10 @@ class User : DynamicObject
 	[config] Dictionary::Ptr macros;
 	[config] Array::Ptr groups;
 	[config] String notification_period (NotificationPeriodRaw);
-	[config] int notification_type_filter {
+	[config] Array::Ptr notification_types (NotificationTypesRaw) {
 		default {{{ return ~(int)0; }}}
 	};
-	[config] int notification_state_filter {
+	[config] Array::Ptr notification_states (NotificationStatesRaw) {
 		default {{{ return ~(int)0; }}}
 	};
 	[state] bool enable_notifications;

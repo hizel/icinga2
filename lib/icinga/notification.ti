@@ -14,10 +14,10 @@ class Notification : DynamicObject
 	[config, protected] Array::Ptr users (UsersRaw);
 	[config, protected] Array::Ptr user_groups (UserGroupsRaw);
 	[config] Dictionary::Ptr times;
-	[config] int notification_type_filter {
+	[config] Array::Ptr types (TypesRaw) {
 		default {{{ return ~(int)0; }}}
 	};
-	[config] int notification_state_filter {
+	[config] Array::Ptr states (StatesRaw) {
 		default {{{ return ~(int)0; }}}
 	};
 	[config, protected] String host_name;
