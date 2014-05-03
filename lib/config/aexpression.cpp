@@ -28,6 +28,7 @@
 #include "base/context.h"
 #include "base/scriptfunction.h"
 #include "base/scriptvariable.h"
+#include "base/experimentalfeature.h"
 #include "base/utility.h"
 #include "base/objectlock.h"
 #include "base/object.h"
@@ -493,8 +494,10 @@ Value AExpression::OpFunction(const AExpression* expr, const Dictionary::Ptr& lo
 	Array::Ptr funcargs = expr->m_Operand2;
 	ScriptFunction::Ptr func = make_shared<ScriptFunction>(boost::bind(&AExpression::FunctionWrapper, _1, funcargs, aexpr, locals));
 
-	if (!name.IsEmpty())
+	if (!name.IsEmpty()) {
 		ScriptFunction::Register(name, func);
+		REGISTER_EXPERIMENTALFEATURE(functions, "function, return, lambda expressions");
+	}
 
 	return func;
 }

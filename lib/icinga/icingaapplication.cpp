@@ -29,6 +29,7 @@
 #include "base/scriptvariable.h"
 #include "base/initialize.h"
 #include "base/statsfunction.h"
+#include "base/experimentalfeature.h"
 
 using namespace icinga;
 
@@ -331,3 +332,34 @@ void IcingaApplication::ClearEnablePerfdata(void)
 {
 	SetOverrideEnablePerfdata(Empty);
 }
+
+Dictionary::Ptr IcingaApplication::GetFeatures(void) const
+{
+	ScriptVariable::Ptr sv = ScriptVariable::GetByName("Features");
+
+	if (!sv)
+		return Dictionary::Ptr();
+
+	return sv->GetData();
+}
+
+
+bool IcingaApplication::CheckExperimentalFeatures(void)
+{
+	Dictionary::Ptr features = GetFeatures();
+
+	String type, description;
+	BOOST_FOREACH(tie(type, description), ExperimentalFeatureRegistry::GetInstance()->GetItems()) {
+		if (features && features->Get(type) == true) {
+			Log(LogWarning, "icinga", "Experimental feature '" + type + "' with description '" + description + "' was enabled. Use at your own risk!");
+			return true;
+		} else {
+			Log(LogCritical, "icinga", "Found experimental feature '" + type + "' with description '" + description + "'. Bailing out ...");
+			return false;
+		}
+	}
+
+	return true;
+}
+
+

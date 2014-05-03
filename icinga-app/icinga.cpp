@@ -441,7 +441,12 @@ int Main(void)
 		}
 	}
 
+	/* parse the configuration files */
 	if (!LoadConfigFiles(appType))
+		return EXIT_FAILURE;
+
+	/* check for experimental config features */
+	if (!Application::GetInstance()->CheckExperimentalFeatures())
 		return EXIT_FAILURE;
 
 	if (g_AppParams.count("validate")) {
@@ -466,7 +471,7 @@ int Main(void)
 		Logger::DisableConsoleLog();
 	}
 
-	// activate config only after daemonization: it starts threads and that is not compatible with fork()
+	/* activate config only after daemonization. starts threads which is incompatible with fork() */
 	if (!ConfigItem::ActivateItems()) {
 		Log(LogCritical, "icinga-app", "Error activating configuration.");
 		return EXIT_FAILURE;

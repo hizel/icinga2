@@ -25,7 +25,7 @@ mkclass_target(sysloglogger.ti sysloglogger.th)
 add_library(base SHARED
   application.cpp application.th array.cpp context.cpp
   convert.cpp dictionary.cpp dynamicobject.cpp dynamicobject.th dynamictype.cpp
-  exception.cpp fifo.cpp filelogger.cpp filelogger.th logger.cpp logger.th
+  exception.cpp experimentalfeature.cpp fifo.cpp filelogger.cpp filelogger.th logger.cpp logger.th
   netstring.cpp networkstream.cpp object.cpp objectlock.cpp process.cpp
   qstring.cpp ringbuffer.cpp scriptfunction.cpp scriptfunctionwrapper.cpp
   scriptutils.cpp scriptvariable.cpp serializer.cpp socket.cpp stacktrace.cpp

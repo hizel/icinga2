@@ -913,3 +913,9 @@ void Application::SetStartTime(double ts)
 {
 	m_StartTime = ts;
 }
+
+bool Application::CheckExperimentalFeatures(void)
+{
+	/* default application does nothing */
+	return true;
+}

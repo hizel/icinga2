@@ -49,6 +49,9 @@ public:
 	String GetPidPath(void) const;
 	Dictionary::Ptr GetVars(void) const;
         String GetNodeName(void) const;
+	Dictionary::Ptr GetFeatures(void) const;
+
+	bool CheckExperimentalFeatures(void);
 
 	virtual bool ResolveMacro(const String& macro, const CheckResult::Ptr& cr, String *result) const;
 

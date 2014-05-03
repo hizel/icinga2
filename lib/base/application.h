@@ -104,6 +104,8 @@ public:
 	static double GetStartTime(void);
 	static void SetStartTime(double ts);
 
+	virtual bool CheckExperimentalFeatures(void);
+
 protected:
 	virtual void OnConfigLoaded(void);
 	virtual void Stop(void);
