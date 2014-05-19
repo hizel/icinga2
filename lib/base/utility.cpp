@@ -510,6 +510,7 @@ bool Utility::Glob(const String& pathSpec, const boost::function<void (const Str
 
 	size_t left;
 	char **gp;
+	std::vector<String> files;
 	for (gp = gr.gl_pathv, left = gr.gl_pathc; left > 0; gp++, left--) {
 		struct stat statbuf;
 
@@ -525,7 +526,13 @@ bool Utility::Glob(const String& pathSpec, const boost::function<void (const Str
 		if (!S_ISDIR(statbuf.st_mode) && !(type & GlobFile))
 			continue;
 
-		callback(*gp);
+		files.push_back(*gp);
+	}
+
+	std::sort(files.begin(), files.end());
+
+	BOOST_FOREACH(const String& cpath, files) {
+		callback(cpath);
 	}
 
 	globfree(&gr);
@@ -603,6 +610,9 @@ bool Utility::GlobRecursive(const String& path, const String& pattern, const boo
 		    << boost::errinfo_errno(errno)
 		    << boost::errinfo_file_name(path));
 
+	std::vector<String> files;
+	std::vector<String> dirs;
+
 	while (dirp) {
 		dirent ent, *pent;
 
@@ -635,7 +645,32 @@ bool Utility::GlobRecursive(const String& path, const String& pattern, const boo
 		}
 
 		if (S_ISDIR(statbuf.st_mode))
-			GlobRecursive(cpath, pattern, callback, type);
+			dirs.push_back(cpath);
+		else
+			files.push_back(cpath);
+	}
+
+	closedir(dirp);
+
+	std::sort(dirs.begin(), dirs.end());
+
+	BOOST_FOREACH(const String& dir, dirs) {
+		GlobRecursive(dir, pattern, callback, type);
+	}
+
+	std::sort(files.begin(), files.end());
+
+	BOOST_FOREACH(const String& cpath, files) {
+		struct stat statbuf;
+
+		if (lstat(cpath.CStr(), &statbuf) < 0) {
+			closedir(dirp);
+
+			BOOST_THROW_EXCEPTION(posix_error()
+			    << boost::errinfo_api_function("lstat")
+			    << boost::errinfo_errno(errno)
+			    << boost::errinfo_file_name(cpath));
+		}
 
 		if (stat(cpath.CStr(), &statbuf) < 0) {
 			closedir(dirp);
@@ -655,13 +690,12 @@ bool Utility::GlobRecursive(const String& path, const String& pattern, const boo
 		if (!S_ISDIR(statbuf.st_mode) && !(type & GlobFile))
 			continue;
 
-		if (!Utility::Match(pattern, ent.d_name))
+		if (!Utility::Match(pattern, cpath))
 			continue;
 
 		callback(cpath);
 	}
 
-	closedir(dirp);
 #endif /* _WIN32 */
 
 	return true;
