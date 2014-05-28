@@ -63,6 +63,7 @@ URL: http://www.icinga.org/
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 Requires: %{name}-bin = %{version}
+Requires: %{name}-config = %{version}
 #Requires: %{name}-ido-mysql = %{version}
 #Requires: %{icingaweb2name} >= %{icingaweb2version}
 
@@ -149,6 +150,13 @@ Requires(post): shadow-utils
 %description common
 Provides common directories, uid and gid among Icinga 2 related
 packages.
+
+%package config
+Summary:       Icinga 2 object configuration examples
+Group:        Applications/System
+
+%description config
+Provides example configuration in /etc/icinga2/conf.d
 
 
 %package doc
@@ -395,8 +403,6 @@ exit 0
 %attr(755,-,-) %{_sysconfdir}/init.d/%{name}
 %attr(0750,%{icinga_user},%{icinga_group}) %dir %{_sysconfdir}/%{name}
 %attr(0750,%{icinga_user},%{icinga_group}) %dir %{_sysconfdir}/%{name}/conf.d
-%attr(0750,%{icinga_user},%{icinga_group}) %dir %{_sysconfdir}/%{name}/conf.d/hosts
-%attr(0750,%{icinga_user},%{icinga_group}) %dir %{_sysconfdir}/%{name}/conf.d/hosts/localhost
 %attr(0750,%{icinga_user},%{icinga_group}) %dir %{_sysconfdir}/%{name}/features-available
 %attr(0750,%{icinga_user},%{icinga_group}) %dir %{_sysconfdir}/%{name}/features-enabled
 %attr(0750,%{icinga_user},%{icinga_group}) %dir %{_sysconfdir}/%{name}/scripts
@@ -404,9 +410,6 @@ exit 0
 %config(noreplace) %attr(0640,%{icinga_user},%{icinga_group}) %{_sysconfdir}/%{name}/%{name}.conf
 %config(noreplace) %attr(0640,%{icinga_user},%{icinga_group}) %{_sysconfdir}/%{name}/constants.conf
 %config(noreplace) %attr(0640,%{icinga_user},%{icinga_group}) %{_sysconfdir}/%{name}/zones.conf
-%config(noreplace) %attr(0640,%{icinga_user},%{icinga_group}) %{_sysconfdir}/%{name}/conf.d/*.conf
-%config(noreplace) %attr(0640,%{icinga_user},%{icinga_group}) %{_sysconfdir}/%{name}/conf.d/hosts/*.conf
-%config(noreplace) %attr(0640,%{icinga_user},%{icinga_group}) %{_sysconfdir}/%{name}/conf.d/hosts/localhost/*.conf
 %config(noreplace) %attr(0640,%{icinga_user},%{icinga_group}) %{_sysconfdir}/%{name}/features-available/*.conf
 %config(noreplace) %attr(0640,%{icinga_user},%{icinga_group}) %{_sysconfdir}/%{name}/zones.d/*
 %config(noreplace) %{_sysconfdir}/%{name}/scripts/*
@@ -445,6 +448,13 @@ exit 0
 %attr(0750,%{icinga_user},%{icinga_group}) %dir %{_localstatedir}/spool/%{name}/tmp
 %attr(0750,%{icinga_user},%{icinga_group}) %dir %{_datadir}/%{name}/include
 %{_datadir}/%{name}/include
+
+%files config
+%attr(0750,%{icinga_user},%{icinga_group}) %dir %{_sysconfdir}/%{name}/conf.d/hosts
+%attr(0750,%{icinga_user},%{icinga_group}) %dir %{_sysconfdir}/%{name}/conf.d/hosts/localhost
+%config(noreplace) %attr(0640,%{icinga_user},%{icinga_group}) %{_sysconfdir}/%{name}/conf.d/*.conf
+%config(noreplace) %attr(0640,%{icinga_user},%{icinga_group}) %{_sysconfdir}/%{name}/conf.d/hosts/*.conf
+%config(noreplace) %attr(0640,%{icinga_user},%{icinga_group}) %{_sysconfdir}/%{name}/conf.d/hosts/localhost/*.conf
 
 %files doc
 %defattr(-,root,root,-)
