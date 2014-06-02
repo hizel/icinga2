@@ -28,6 +28,31 @@ Icinga 1.x configuration.
 
 If you require in-depth explainations, please check the [next chapter](#differences-1x-2).
 
+#### <a id="manual-config-migration-hints-Intervals"></a> Manual Config Migration Hints for Intervals
+
+By default all intervals without any duration literal are interpreted as seconds. Therefore
+all existing Icinga 1.x `*_interval` attributes require an additional `m` duration literal.
+
+Icinga 1.x:
+
+    define service {
+        service_description             service1
+        host_name                       localhost1
+        check_command                   test_customvar
+        use                             generic-service
+        check_interval                  5
+        retry_interval                  1
+    }
+
+Icinga 2:
+
+    object Service "service1" {
+        host_name = "localhost1"
+        check_command = "test_customvar"
+        check_interval = 5m
+        retry_interval = 1m
+    }
+
 #### <a id="manual-config-migration-hints-services"></a> Manual Config Migration Hints for Services
 
 If you have used the `host_name` attribute in Icinga 1.x with one or more host names this service
@@ -72,6 +97,98 @@ Using Icinga 2 you can migrate this to the [apply rules](#using-apply) syntax:
         assign where "hostgroup3" in host.groups
     }
 
+#### <a id="manual-config-migration-hints-check-command-arguments"></a> Manual Config Migration Hints for Check Command Arguments
+
+Host and service check command arguments
+
+
+#### <a id="manual-config-migration-hints-runtime-macros"></a> Manual Config Migration Hints for Runtime Macros
+
+Runtime macros have been renamed. A detailed comparison table can be found [here](#differences-1x-2-runtime-macros).
+
+For example, accessing the service check output looks like the following in Icinga 1.x:
+
+    $SERVICEOUTPUT$
+
+In Icinga 2 you will need to write:
+
+    $service.output$
+
+
+#### <a id="manual-config-migration-hints-runtime-custom-attributes"></a> Manual Config Migration Hints for Runtime Custom Attributes
+
+Custom variables from Icinga 1.x are available as Icinga 2 custom attributes.
+
+    define command {
+        command_name                    test_customvar
+        command_line                    echo "Host CV: $_HOSTCVTEST$ Service CV: $_SERVICECVTEST$\n"
+    }
+
+    define host {
+        host_name                       localhost1
+        check_command                   test_customvar
+        use                             generic-host
+        _CVTEST                         host cv value
+    }
+
+    define service {
+        service_description             service1
+        host_name                       localhost1
+        check_command                   test_customvar
+        use                             generic-service
+        _CVTEST                         service cv value
+    }
+
+Can be written as the following in Icinga 2:
+
+    object CheckCommand "test_customvar" {
+        import "plugin-check-command"
+        command = "echo "Host CV: $host.vars.CVTEST$ Service CV: $service.vars.CVTEST$\n""
+    }
+
+    object Host "localhost1" {
+        import "generic-host"
+        check_command = "test_customvar"
+        vars.CVTEST = "host cv value"
+    }
+
+    object Service "service1" {
+        host_name = "localhost1"
+        check_command = "test_customvar"
+        vars.CVTEST = "service cv value"
+    }
+
+If you are just defining `$CVTEST$ in your command definition its value depends on the
+execution scope - the host check command will fetch the host attribute value of `vars.CVTEST`
+while the service check command resolves its value to the service attribute attribute `vars.CVTEST`.
+
+#### <a id="manual-config-migration-hints-notifications"></a> Manual Config Migration Hints for Notifications
+
+
+
+If you are migrating a host or service notification, you'll need to extract the following information from
+your existing Icinga 1.x configuration objects
+
+* host/service attribute `contacts` and `contact_groups`
+* host/service attribute `notification_options`
+
+Extract all contacts from the remaining groups, and create a unique list. This is required for determining
+the host and service notification commands involved.
+
+* contact attributes `host_notification_commands` and `service_notification_commands` (can be a comma separated list)
+
+
+
+
+
+Icinga 1.x defines all notification filters in an attribute called `notification_options`. Using Icinga 2 you will
+have to split these values into the `states` and `types` attributes.
+
+
+#### <a id="manual-config-migration-hints-escalations"></a> Manual Config Migration Hints for Escalations
+
+
+#### <a id="manual-config-migration-hints-escalations"></a> Manual Config Migration Hints for Dependencies
 
 
 
